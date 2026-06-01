@@ -1,6 +1,6 @@
 # 🏨 AURUM HOTELS — Full-Stack Hotel Booking App
 
-A complete hotel booking platform built with React.js, Node.js, MySQL, MongoDB, and Razorpay.
+A complete hotel booking platform built with React.js, Node.js, MySQL, MongoDB, and Razorpay. Features city-based hotel search across 5 Indian cities with interactive maps.
 
 ## Tech Stack
 
@@ -12,26 +12,30 @@ A complete hotel booking platform built with React.js, Node.js, MySQL, MongoDB, 
 | Database 1 | MySQL + Sequelize ORM (users, bookings, payments) |
 | Database 2 | MongoDB + Mongoose (room content & inventory) |
 | Payment | Razorpay |
+| Maps | Leaflet.js (OpenStreetMap) |
 
 ---
 
 ## Features
 
 ### User Side
-- Home page with hero, search, featured rooms
-- Room search with filters (type, date, guests, price)
-- Room detail page with image gallery, amenities, booking calendar
-- Secure booking flow with date selection
-- Razorpay payment integration
-- Booking confirmation page
-- My Bookings dashboard (view, cancel, pay pending)
-- Login / Register with JWT auth
+- 🏙️ City-based hotel search — Delhi, Mumbai, Goa, Bangalore, Jaipur
+- 🔍 "No hotels available" message for unsupported cities with suggestions
+- 🏠 Home page with hero, city search, featured rooms
+- 🛏️ Room search with filters (city, type, date, guests, price)
+- 🖼️ Room detail page with 5-image gallery (clickable thumbnails)
+- 🗺️ Interactive Leaflet map with hotel pin and nearby landmarks
+- 📅 Secure booking flow with date selection and price breakdown
+- 💳 Razorpay payment integration (Demo + Live mode)
+- ✅ Booking confirmation page
+- 📋 My Bookings dashboard (view, cancel, pay pending)
+- 🔐 Login / Register with JWT auth
 
 ### Admin Panel (/admin)
-- Dashboard with revenue charts and stats (Recharts)
-- Room management — Add, Edit, Delete rooms (MongoDB)
-- Booking management — View all, update status
-- User management — View all, activate/deactivate
+- 📊 Dashboard with revenue charts and stats (Recharts)
+- 🛏️ Room management — Add, Edit, Delete rooms (MongoDB)
+- 📋 Booking management — View all, update status
+- 👥 User management — View all, activate/deactivate
 
 ---
 
@@ -64,7 +68,7 @@ hotel-booking/
 │   │   ├── booking.routes.js
 │   │   ├── payment.routes.js
 │   │   └── admin.routes.js
-│   ├── seeder.js             # Seeds 15 rooms into MongoDB
+│   ├── seeder.js             # Seeds 15 rooms across 5 cities into MongoDB
 │   ├── server.js
 │   ├── .env.example
 │   └── package.json
@@ -124,11 +128,11 @@ Edit `.env` with your values:
 PORT=5000
 JWT_SECRET=your_secret_key_here
 
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your_mysql_password
-MYSQL_DATABASE=hotel_booking
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=hotel_booking
 
 MONGO_URI=mongodb://localhost:27017/hotel_booking_rooms
 
@@ -144,7 +148,7 @@ npm install
 npm run dev
 ```
 
-Seed 15 rooms into MongoDB:
+Seed 15 rooms across 5 cities into MongoDB:
 ```bash
 node seeder.js
 ```
@@ -172,7 +176,17 @@ USE hotel_booking;
 UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
 ```
 
-Or use the demo credentials shown on the login page.
+---
+
+## Available Cities
+
+| City | Area | Rooms |
+|---|---|---|
+| 🏙️ Delhi | Connaught Place | 3 rooms |
+| 🌊 Mumbai | Bandra West | 3 rooms |
+| 🏖️ Goa | Calangute Beach | 3 rooms |
+| 🌿 Bangalore | Indiranagar | 3 rooms |
+| 🏰 Jaipur | MI Road | 3 rooms |
 
 ---
 
@@ -183,11 +197,12 @@ Or use the demo credentials shown on the login page.
 | POST | /api/auth/register | — | Register user |
 | POST | /api/auth/login | — | Login |
 | GET | /api/auth/me | ✅ | Get current user |
-| GET | /api/rooms | — | Get all rooms (filterable) |
+| GET | /api/rooms | — | Get all rooms (filterable by city, type, price) |
 | GET | /api/rooms/:id | — | Get room detail |
 | POST | /api/rooms | Admin | Create room |
 | PUT | /api/rooms/:id | Admin | Update room |
 | DELETE | /api/rooms/:id | Admin | Delete room |
+| POST | /api/rooms/:id/review | ✅ | Add review |
 | POST | /api/bookings | ✅ | Create booking |
 | GET | /api/bookings/my | ✅ | My bookings |
 | PUT | /api/bookings/:id/cancel | ✅ | Cancel booking |
@@ -211,6 +226,6 @@ Use these in test mode:
 
 ---
 
-## Built With ❤️ by Vivek Rai
+## Built with ❤️ by Vivek Rai
 Portfolio: https://portfolio-vivekrai.vercel.app/  
 GitHub: https://github.com/vivekrai89
