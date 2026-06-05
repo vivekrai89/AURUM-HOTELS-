@@ -1,7 +1,3 @@
-## Live Demo
-
-🌐 https://aurumhotels.vercel.app
-
 # 🏨 AURUM HOTELS — Full-Stack Hotel Booking App
 
 A complete hotel booking platform built with React.js, Node.js, MySQL, MongoDB, and Razorpay. Features city-based hotel search across 5 Indian cities with interactive maps.
@@ -233,3 +229,7 @@ Use these in test mode:
 ## Built with ❤️ by Vivek Rai
 Portfolio: https://portfolio-vivekrai.vercel.app/  
 GitHub: https://github.com/vivekrai89
+## Live Demo
+
+🌐 https://aurumhotels.vercel.app
+
