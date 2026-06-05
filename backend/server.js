@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://aurumhotels.vercel.app/',
+    'https://aurumhotels.vercel.app',
     'https://aurum-hotels-frontend.vercel.app',
     process.env.FRONTEND_URL
   ].filter(Boolean),
