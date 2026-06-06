@@ -10,11 +10,11 @@ import { MdOutlinePool, MdOutlineSpa } from 'react-icons/md'
 const POPULAR_CITIES = ['Delhi', 'Mumbai', 'Goa', 'Bangalore', 'Jaipur']
 
 const VIDEOS = [
-  '/videos/video1.mp4',
-  '/videos/video2.mp4',
-  '/videos/video3.mp4',
-  '/videos/video4.mp4',
-  '/videos/video5.mp4',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video1_cd4av8.mp4',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video2_inhlun.mp4',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video3_yxxrnw.mp4',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video4_xoyhdr.mp4',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video5_hm6qv9.mp4',
 ]
 
 export default function HomePage() {
@@ -27,6 +27,14 @@ export default function HomePage() {
   const videoRef = useRef(null)
 
   useEffect(() => { dispatch(fetchRooms()) }, [])
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentVideo(prev => (prev + 1) % VIDEOS.length)
+  }, 8000)
+
+  return () => clearInterval(interval)
+}, [])
 
   const prevVideo = () => setCurrentVideo(v => (v - 1 + VIDEOS.length) % VIDEOS.length)
   const nextVideo = () => setCurrentVideo(v => (v + 1) % VIDEOS.length)
@@ -67,17 +75,16 @@ export default function HomePage() {
 
       {/* Hero - Video Only */}
       <section className="relative overflow-hidden h-screen">
-        <video
-          ref={videoRef}
-          key={currentVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src={VIDEOS[currentVideo]} type="video/mp4" />
-        </video>
+      <video
+  ref={videoRef}
+  key={currentVideo}
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="absolute inset-0 w-full h-full object-cover"
+>
 
         <div className="absolute inset-0 bg-black/40" />
 
@@ -101,17 +108,46 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Only Welcome Text on video */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="text-center">
-           <p className="text-gold tracking-[0.4em] text-lg uppercase font-sans animate-pulse drop-shadow-lg">
-  ✦ Welcome to Aurum Hotels ✦
-</p>
-            <h1 className="text-6xl md:text-8xl font-serif text-white">
-              Where Luxury<br /><em>Meets Comfort</em>
-            </h1>
-          </div>
-        </div>
+      
+      <div className="absolute inset-0 flex items-center justify-center z-10">
+  <div className="text-center px-4 max-w-4xl">
+    
+    <p className="text-gold tracking-[0.4em] text-sm md:text-lg uppercase mb-6 font-medium">
+      ✦ Welcome to Aurum Hotels ✦
+    </p>
+
+    <h1 className="text-5xl md:text-8xl font-serif font-bold text-white leading-tight">
+      Experience
+      <br />
+      <span className="italic text-gold">
+        Luxury Redefined
+      </span>
+    </h1>
+
+    <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+      Discover exceptional stays, world-class hospitality,
+      and unforgettable experiences across India's most
+      prestigious destinations.
+    </p>
+
+    <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+      <button
+        onClick={() => navigate('/rooms')}
+        className="gold-gradient text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:scale-105 transition-transform"
+      >
+        Explore Rooms
+      </button>
+
+      <button
+        onClick={() => navigate('/rooms')}
+        className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold backdrop-blur-sm hover:bg-white/10 transition-all"
+      >
+        Book Your Stay
+      </button>
+    </div>
+
+  </div>
+</div>
       </section>
 
       {/* Search & Content Below Video */}
