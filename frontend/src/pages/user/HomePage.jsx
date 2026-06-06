@@ -16,6 +16,14 @@ const VIDEOS = [
   'https://res.cloudinary.com/dfkqd8gxp/video/upload/q_auto,f_auto/video5_hm6qv9.mp4',
 ]
 
+const POSTERS = [
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video1_cd4av8.jpg',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video2_inhlun.jpg',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video3_yxxrnw.jpg',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video4_xoyhdr.jpg',
+  'https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video5_hm6qv9.jpg',
+  ]
+
 export default function HomePage() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -85,7 +93,7 @@ export default function HomePage() {
           loop
           playsInline
           preload="auto"
-          poster="https://res.cloudinary.com/dfkqd8gxp/video/upload/so_0/video1_cd4av8.jpg"
+          poster={POSTERS[currentVideo]}
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src={VIDEOS[currentVideo]} type="video/mp4" />
