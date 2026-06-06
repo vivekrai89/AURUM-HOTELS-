@@ -1,12 +1,21 @@
-import { useState, useEffect } from 'react'
+
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchRooms } from '../../slices/roomSlice'
 import RoomCard from '../../components/user/RoomCard'
-import { FiSearch, FiCalendar, FiUsers, FiAward, FiShield, FiCoffee, FiWifi, FiMapPin } from 'react-icons/fi'
+import { FiSearch, FiCalendar, FiAward, FiShield, FiCoffee, FiWifi, FiMapPin } from 'react-icons/fi'
 import { MdOutlinePool, MdOutlineSpa } from 'react-icons/md'
 
 const POPULAR_CITIES = ['Delhi', 'Mumbai', 'Goa', 'Bangalore', 'Jaipur']
+
+const VIDEOS = [
+  '/videos/video1.mp4',
+  '/videos/video2.mp4',
+  '/videos/video3.mp4',
+  '/videos/video4.mp4',
+  '/videos/video5.mp4',
+]
 
 export default function HomePage() {
   const navigate = useNavigate()
@@ -14,8 +23,13 @@ export default function HomePage() {
   const { rooms, loading } = useSelector(s => s.rooms)
   const [search, setSearch] = useState({ city: '', checkIn: '', checkOut: '', guests: 1, type: '' })
   const [citySuggestions, setCitySuggestions] = useState([])
+  const [currentVideo, setCurrentVideo] = useState(0)
+  const videoRef = useRef(null)
 
   useEffect(() => { dispatch(fetchRooms()) }, [])
+
+  const prevVideo = () => setCurrentVideo(v => (v - 1 + VIDEOS.length) % VIDEOS.length)
+  const nextVideo = () => setCurrentVideo(v => (v + 1) % VIDEOS.length)
 
   const handleCityInput = (val) => {
     setSearch(s => ({ ...s, city: val }))
@@ -50,38 +64,73 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="hero-gradient relative overflow-hidden min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 hero-gradient opacity-80" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <p className="text-gold tracking-[0.3em] text-sm uppercase font-sans mb-4 animate-fade-in">Welcome to Aurum Hotels</p>
-          <h1 className="text-5xl md:text-7xl font-serif text-white mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            Where Luxury<br /><em>Meets Comfort</em>
-          </h1>
-          <p className="text-gray-300 text-lg max-w-xl mx-auto mb-12 font-light animate-fade-in" style={{ animationDelay: '0.2s' }}>
+      {/* Hero - Video Only */}
+      <section className="relative overflow-hidden h-screen">
+        <video
+          ref={videoRef}
+          key={currentVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={VIDEOS[currentVideo]} type="video/mp4" />
+        </video>
+
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* Left Arrow */}
+        <button onClick={prevVideo}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all">
+          &#8249;
+        </button>
+
+        {/* Right Arrow */}
+        <button onClick={nextVideo}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all">
+          &#8250;
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {VIDEOS.map((_, i) => (
+            <button key={i} onClick={() => setCurrentVideo(i)}
+              className={`h-2 rounded-full transition-all ${i === currentVideo ? 'bg-gold w-6' : 'bg-white/40 w-2'}`} />
+          ))}
+        </div>
+
+        {/* Only Welcome Text on video */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-center">
+           <p className="text-gold tracking-[0.4em] text-lg uppercase font-sans animate-pulse drop-shadow-lg">
+  ✦ Welcome to Aurum Hotels ✦
+</p>
+            <h1 className="text-6xl md:text-8xl font-serif text-white">
+              Where Luxury<br /><em>Meets Comfort</em>
+            </h1>
+          </div>
+        </div>
+      </section>
+
+      {/* Search & Content Below Video */}
+      <section className="hero-gradient py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gray-300 text-lg max-w-xl mx-auto mb-10 font-light">
             Discover luxury hotels across India's finest destinations. From Delhi to Goa, find your perfect stay.
           </p>
 
           {/* Search Form */}
-          <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-2xl p-3 max-w-5xl mx-auto animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-2xl p-3 max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
-
-              {/* City Search */}
               <div className="relative md:col-span-2">
                 <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 h-full">
                   <FiMapPin size={16} className="text-gold shrink-0" />
-                  <input
-                    type="text"
-                    value={search.city}
-                    onChange={e => handleCityInput(e.target.value)}
+                  <input type="text" value={search.city} onChange={e => handleCityInput(e.target.value)}
                     placeholder="Search city... (Delhi, Goa...)"
-                    className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700"
-                  />
+                    className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
                 </div>
-                {/* Suggestions dropdown */}
                 {citySuggestions.length > 0 && (
                   <div className="absolute top-full left-0 right-0 bg-white border border-gray-100 rounded-xl shadow-lg mt-1 z-50 overflow-hidden">
                     {citySuggestions.map(city => (
@@ -94,8 +143,6 @@ export default function HomePage() {
                   </div>
                 )}
               </div>
-
-              {/* Room Type */}
               <div className="md:col-span-1">
                 <select value={search.type} onChange={e => setSearch({ ...search, type: e.target.value })}
                   className="w-full h-full px-4 py-3.5 text-sm text-gray-700 border-0 focus:outline-none rounded-xl bg-gray-50">
@@ -105,24 +152,18 @@ export default function HomePage() {
                   ))}
                 </select>
               </div>
-
-              {/* Check In */}
               <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 md:col-span-1">
                 <FiCalendar size={16} className="text-gray-400 shrink-0" />
                 <input type="date" value={search.checkIn} onChange={e => setSearch({ ...search, checkIn: e.target.value })}
                   min={new Date().toISOString().split('T')[0]}
                   className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
               </div>
-
-              {/* Check Out */}
               <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 md:col-span-1">
                 <FiCalendar size={16} className="text-gray-400 shrink-0" />
                 <input type="date" value={search.checkOut} onChange={e => setSearch({ ...search, checkOut: e.target.value })}
                   min={search.checkIn || new Date().toISOString().split('T')[0]}
                   className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
               </div>
-
-              {/* Search Button */}
               <button type="submit" className="btn-primary flex items-center justify-center gap-2 md:col-span-1">
                 <FiSearch size={16} /> Search
               </button>
@@ -130,7 +171,7 @@ export default function HomePage() {
           </form>
 
           {/* Popular Cities */}
-          <div className="flex items-center justify-center gap-3 mt-6 flex-wrap animate-fade-in">
+          <div className="flex items-center justify-center gap-3 mt-6 flex-wrap">
             <span className="text-gray-400 text-sm">Popular:</span>
             {POPULAR_CITIES.map(city => (
               <button key={city} type="button"
@@ -209,6 +250,7 @@ export default function HomePage() {
           </button>
         </div>
       </section>
+
     </div>
   )
 }
