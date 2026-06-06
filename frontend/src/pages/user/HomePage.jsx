@@ -85,6 +85,7 @@ export default function HomePage() {
           loop
           playsInline
           preload="auto"
+          poster="https://res.cloudinary.com/dfkqd8gxp/image/upload/q_auto,f_auto/video1_cd4av8.jpg"
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src={VIDEOS[currentVideo]} type="video/mp4" />
