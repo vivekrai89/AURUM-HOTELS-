@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -26,15 +25,15 @@ export default function HomePage() {
   const [currentVideo, setCurrentVideo] = useState(0)
   const videoRef = useRef(null)
 
-  useEffect(() => { dispatch(fetchRooms()) }, [])
+  // FIX 1: dispatch added to dependency array
+  useEffect(() => { dispatch(fetchRooms()) }, [dispatch])
 
   useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentVideo(prev => (prev + 1) % VIDEOS.length)
-  }, 8000)
-
-  return () => clearInterval(interval)
-}, [])
+    const interval = setInterval(() => {
+      setCurrentVideo(prev => (prev + 1) % VIDEOS.length)
+    }, 8000)
+    return () => clearInterval(interval)
+  }, [])
 
   const prevVideo = () => setCurrentVideo(v => (v - 1 + VIDEOS.length) % VIDEOS.length)
   const nextVideo = () => setCurrentVideo(v => (v + 1) % VIDEOS.length)
@@ -73,81 +72,95 @@ export default function HomePage() {
   return (
     <div>
 
-      {/* Hero - Video Only */}
+      {/* Hero - Video Section */}
+      {/* FIX 2: <video> tag properly closed, <source> added, overlay & controls moved outside */}
       <section className="relative overflow-hidden h-screen">
-      <video
-  ref={videoRef}
-  key={currentVideo}
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  className="absolute inset-0 w-full h-full object-cover"
->
 
+        {/* Video element — properly closed with <source> tag */}
+        <video
+          ref={videoRef}
+          key={currentVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={VIDEOS[currentVideo]} type="video/mp4" />
+        </video>
+
+        {/* Dark overlay — outside <video> now */}
         <div className="absolute inset-0 bg-black/40" />
 
         {/* Left Arrow */}
-        <button onClick={prevVideo}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all">
+        <button
+          onClick={prevVideo}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all"
+        >
           &#8249;
         </button>
 
         {/* Right Arrow */}
-        <button onClick={nextVideo}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all">
+        <button
+          onClick={nextVideo}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl backdrop-blur-sm transition-all"
+        >
           &#8250;
         </button>
 
         {/* Dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
           {VIDEOS.map((_, i) => (
-            <button key={i} onClick={() => setCurrentVideo(i)}
-              className={`h-2 rounded-full transition-all ${i === currentVideo ? 'bg-gold w-6' : 'bg-white/40 w-2'}`} />
+            <button
+              key={i}
+              onClick={() => setCurrentVideo(i)}
+              className={`h-2 rounded-full transition-all ${i === currentVideo ? 'bg-gold w-6' : 'bg-white/40 w-2'}`}
+            />
           ))}
         </div>
 
-      
-      <div className="absolute inset-0 flex items-center justify-center z-10">
-  <div className="text-center px-4 max-w-4xl">
-    
-    <p className="text-gold tracking-[0.4em] text-sm md:text-lg uppercase mb-6 font-medium">
-      ✦ Welcome to Aurum Hotels ✦
-    </p>
+        {/* Hero Text */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-center px-4 max-w-4xl">
 
-    <h1 className="text-5xl md:text-8xl font-serif font-bold text-white leading-tight">
-      Experience
-      <br />
-      <span className="italic text-gold">
-        Luxury Redefined
-      </span>
-    </h1>
+            <p className="text-gold tracking-[0.4em] text-sm md:text-lg uppercase mb-6 font-medium">
+              ✦ Welcome to Aurum Hotels ✦
+            </p>
 
-    <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-      Discover exceptional stays, world-class hospitality,
-      and unforgettable experiences across India's most
-      prestigious destinations.
-    </p>
+            <h1 className="text-5xl md:text-8xl font-serif font-bold text-white leading-tight">
+              Experience
+              <br />
+              <span className="italic text-gold">
+                Luxury Redefined
+              </span>
+            </h1>
 
-    <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-      <button
-        onClick={() => navigate('/rooms')}
-        className="gold-gradient text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:scale-105 transition-transform"
-      >
-        Explore Rooms
-      </button>
+            <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+              Discover exceptional stays, world-class hospitality,
+              and unforgettable experiences across India's most
+              prestigious destinations.
+            </p>
 
-      <button
-        onClick={() => navigate('/rooms')}
-        className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold backdrop-blur-sm hover:bg-white/10 transition-all"
-      >
-        Book Your Stay
-      </button>
-    </div>
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+              <button
+                onClick={() => navigate('/rooms')}
+                className="gold-gradient text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:scale-105 transition-transform"
+              >
+                Explore Rooms
+              </button>
 
-  </div>
-</div>
+              <button
+                onClick={() => navigate('/rooms')}
+                className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold backdrop-blur-sm hover:bg-white/10 transition-all"
+              >
+                Book Your Stay
+              </button>
+            </div>
+
+          </div>
+        </div>
+
       </section>
 
       {/* Search & Content Below Video */}
@@ -160,49 +173,78 @@ export default function HomePage() {
           {/* Search Form */}
           <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-2xl p-3 max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
+
+              {/* City Input */}
               <div className="relative md:col-span-2">
                 <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 h-full">
                   <FiMapPin size={16} className="text-gold shrink-0" />
-                  <input type="text" value={search.city} onChange={e => handleCityInput(e.target.value)}
+                  <input
+                    type="text"
+                    value={search.city}
+                    onChange={e => handleCityInput(e.target.value)}
                     placeholder="Search city... (Delhi, Goa...)"
-                    className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
+                    className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700"
+                  />
                 </div>
                 {citySuggestions.length > 0 && (
                   <div className="absolute top-full left-0 right-0 bg-white border border-gray-100 rounded-xl shadow-lg mt-1 z-50 overflow-hidden">
                     {citySuggestions.map(city => (
-                      <button key={city} type="button"
+                      <button
+                        key={city}
+                        type="button"
                         onClick={() => { setSearch(s => ({ ...s, city })); setCitySuggestions([]) }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gold/10 hover:text-gold flex items-center gap-2">
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gold/10 hover:text-gold flex items-center gap-2"
+                      >
                         <FiMapPin size={13} className="text-gold" /> {city}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
+
+              {/* Room Type */}
               <div className="md:col-span-1">
-                <select value={search.type} onChange={e => setSearch({ ...search, type: e.target.value })}
-                  className="w-full h-full px-4 py-3.5 text-sm text-gray-700 border-0 focus:outline-none rounded-xl bg-gray-50">
+                <select
+                  value={search.type}
+                  onChange={e => setSearch({ ...search, type: e.target.value })}
+                  className="w-full h-full px-4 py-3.5 text-sm text-gray-700 border-0 focus:outline-none rounded-xl bg-gray-50"
+                >
                   <option value="">All Types</option>
                   {['Standard', 'Deluxe', 'Suite', 'Presidential', 'Family'].map(t => (
                     <option key={t} value={t}>{t}</option>
                   ))}
                 </select>
               </div>
+
+              {/* Check In */}
               <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 md:col-span-1">
                 <FiCalendar size={16} className="text-gray-400 shrink-0" />
-                <input type="date" value={search.checkIn} onChange={e => setSearch({ ...search, checkIn: e.target.value })}
+                <input
+                  type="date"
+                  value={search.checkIn}
+                  onChange={e => setSearch({ ...search, checkIn: e.target.value })}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
+                  className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700"
+                />
               </div>
+
+              {/* Check Out */}
               <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 md:col-span-1">
                 <FiCalendar size={16} className="text-gray-400 shrink-0" />
-                <input type="date" value={search.checkOut} onChange={e => setSearch({ ...search, checkOut: e.target.value })}
+                <input
+                  type="date"
+                  value={search.checkOut}
+                  onChange={e => setSearch({ ...search, checkOut: e.target.value })}
                   min={search.checkIn || new Date().toISOString().split('T')[0]}
-                  className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700" />
+                  className="w-full py-3.5 text-sm bg-transparent focus:outline-none text-gray-700"
+                />
               </div>
+
+              {/* Search Button */}
               <button type="submit" className="btn-primary flex items-center justify-center gap-2 md:col-span-1">
                 <FiSearch size={16} /> Search
               </button>
+
             </div>
           </form>
 
@@ -210,9 +252,12 @@ export default function HomePage() {
           <div className="flex items-center justify-center gap-3 mt-6 flex-wrap">
             <span className="text-gray-400 text-sm">Popular:</span>
             {POPULAR_CITIES.map(city => (
-              <button key={city} type="button"
+              <button
+                key={city}
+                type="button"
                 onClick={() => navigate(`/rooms?city=${city}`)}
-                className="text-sm text-white/80 hover:text-gold border border-white/20 hover:border-gold px-3 py-1 rounded-full transition-all">
+                className="text-sm text-white/80 hover:text-gold border border-white/20 hover:border-gold px-3 py-1 rounded-full transition-all"
+              >
                 📍 {city}
               </button>
             ))}
@@ -243,7 +288,7 @@ export default function HomePage() {
           </div>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1,2,3].map(i => <div key={i} className="h-80 bg-gray-200 rounded-2xl animate-pulse" />)}
+              {[1, 2, 3].map(i => <div key={i} className="h-80 bg-gray-200 rounded-2xl animate-pulse" />)}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -265,7 +310,10 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {amenities.map(({ icon: Icon, label }) => (
-              <div key={label} className="text-center p-6 rounded-2xl border border-gray-100 hover:border-gold hover:shadow-gold transition-all duration-300 group">
+              <div
+                key={label}
+                className="text-center p-6 rounded-2xl border border-gray-100 hover:border-gold hover:shadow-gold transition-all duration-300 group"
+              >
                 <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-gold transition-colors">
                   <Icon size={22} className="text-gold group-hover:text-white transition-colors" />
                 </div>
@@ -281,7 +329,10 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-serif text-white mb-4">Ready for an Unforgettable Stay?</h2>
           <p className="text-gray-300 mb-8">Book directly for the best rates and exclusive perks.</p>
-          <button onClick={() => navigate('/rooms')} className="gold-gradient text-white font-semibold px-10 py-4 rounded-xl hover:opacity-90 transition-opacity shadow-gold">
+          <button
+            onClick={() => navigate('/rooms')}
+            className="gold-gradient text-white font-semibold px-10 py-4 rounded-xl hover:opacity-90 transition-opacity shadow-gold"
+          >
             Explore All Rooms
           </button>
         </div>
