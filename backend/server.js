@@ -39,9 +39,9 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectMySQL();
   await connectMongo();
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  connectMySQL(); // runs in background, does not block or crash the server
 };
 
 startServer();
